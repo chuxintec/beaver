@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "sourceOwner": "GREA",
+  "sourceManifestPath": "private upstream provenance record (not distributed)",
+  "sourceManifestSha256": "283f5fca66e95f1fa65a52fa3c43169f40661ded30a13db375a6e0bb37ab92b3",
+  "greaVersion": "2026.10.26.dev4",
+  "sourceGitHead": "e093c4ee15318b412e7ca2dd107791017ff30eb7",
+  "license": "MIT",
+  "sourceLicensePath": "private upstream provenance record (not distributed)",
+  "fixedProtoPins": {
+    "go_language_directive": "1.26.0",
+    "historical_toolchain": "1.26.2 declared; not probed this turn",
+    "protoc_generated_header": "7.34.1",
+    "protoc_gen_go": "1.36.12",
+    "protoc_gen_go_grpc": "1.6.2",
+    "resolved_graph": "source/tools/server-go/template/go.mod + go.sum",
+    "redis_replacement": "public.ecr.aws/docker/library/redis@sha256:4fa24486b8bcca8eec45ee0eb166edc674795e53a2b53d1a9ef263eecebaac85",
+    "mysql": "mysql@sha256:2952e3be7807f06fc18de50b3ea1a632d5c70d63482ff7d7376fe3aa8999babf"
+  },
+  "excluded": [
+    "clients/CocosGateway.ts",
+    "cmd/role/main.go",
+    "config/game.json",
+    "internal/demo/config.go",
+    "internal/demo/config_test.go",
+    "smoke.py",
+    "stack.py"
+  ],
+  "generatedFromProto": [
+    "api/game.pb.go",
+    "api/game_grpc.pb.go"
+  ],
+  "files": [
+    {
+      "sourcePath": "tools/server-go/template/.dockerignore",
+      "seedPath": ".dockerignore",
+      "bytes": 50,
+      "sha256": "63e22a4a6c7d1a062a3d5f1f2ced730b3f742be62698589485a6a71a4df9d59f",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/.gitignore",
+      "seedPath": ".gitignore",
+      "bytes": 26,
+      "sha256": "ec20796a3540f79365bb302f4f3280bd2490c7b18881d918708aee095db72210",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/DEPENDENCIES.md",
+      "seedPath": "DEPENDENCIES.md",
+      "bytes": 880,
+      "sha256": "673566748989e6c6b4e342735097cc932b80b6d8ed69910e074dd89e9326a372",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/Dockerfile",
+      "seedPath": "Dockerfile",
+      "bytes": 108,
+      "sha256": "a7a0e8be79932dbc9f58e9f345cbf8c4110917ec2655ecc3915a3ae1792c4442",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/api/game.proto",
+      "seedPath": "api/game.proto",
+      "bytes": 725,
+      "sha256": "d80b2c00a25d7391fcf62211e3f453d2e71656e63329a7056fd8435a2d9e2305",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/clients/UnityGateway.cs",
+      "seedPath": "clients/UnityGateway.cs",
+      "bytes": 1166,
+      "sha256": "7ba0778e5598c8b9795f0d091f70e6e1146729e01553d23a8b9bc0e4dae0c993",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/clients/wire.json",
+      "seedPath": "clients/wire.json",
+      "bytes": 446,
+      "sha256": "7b5bafb6f9de5e45ba6f4b4d505fa126a64f4a0523525b0459eaba0c15617ea8",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/billing/main.go",
+      "seedPath": "cmd/billing/main.go",
+      "bytes": 241,
+      "sha256": "e1377f5e9046f74fa9f5ee9055ec61929bc44c40f660c10ac9ec148628cf79df",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/chat/main.go",
+      "seedPath": "cmd/chat/main.go",
+      "bytes": 235,
+      "sha256": "3259f7139509fa569ef5f9c30b984d31fc050791936f06cc3042fd0fb5303261",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/gateway/main.go",
+      "seedPath": "cmd/gateway/main.go",
+      "bytes": 241,
+      "sha256": "568ce8c5a919b9faa33610fcea9205909444dd5873f75b001280542a2cc755cd",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/login/main.go",
+      "seedPath": "cmd/login/main.go",
+      "bytes": 237,
+      "sha256": "4e21314b20f8b18552a2efb5684f0b24ff6907ce2bbaa9d69bc2ca0f288b5d81",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/server/main.go",
+      "seedPath": "cmd/server/main.go",
+      "bytes": 239,
+      "sha256": "1e38f97eb6cca48d39432a96300913be56120d3e27a606bf18ff37b61a721e9e",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/cmd/world/main.go",
+      "seedPath": "cmd/world/main.go",
+      "bytes": 237,
+      "sha256": "724dfb3eac0b645f1ad822d0dbbefe048ce6a7de25b915f2e084be35a9b4d983",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/go.mod",
+      "seedPath": "go.mod",
+      "bytes": 553,
+      "sha256": "3ae840b43a34bdedf3cea265ccceb046d059e273bdd621abd75ace5a1fece94a",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/go.sum",
+      "seedPath": "go.sum",
+      "bytes": 4979,
+      "sha256": "5f7c9ca4ab45fb06d493989efa4ed5abc9dfb5310436566a2da5cb3f8152ffeb",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/gateway.go",
+      "seedPath": "internal/platform/gateway.go",
+      "bytes": 4574,
+      "sha256": "f540c7688f76b685aeb837cc2addf355ddf3cacd18b08276f6afbb100264c6f3",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/gateway_test.go",
+      "seedPath": "internal/platform/gateway_test.go",
+      "bytes": 542,
+      "sha256": "f010df88685c210458ce42af7a463839249684f63487be0c84b93ff793c33fb4",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/int.go",
+      "seedPath": "internal/platform/int.go",
+      "bytes": 100,
+      "sha256": "42eb90537da864347b18a2387f4b0b8278b0a2f5202f859ffef5a533f6ec8b81",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/rpc.go",
+      "seedPath": "internal/platform/rpc.go",
+      "bytes": 6563,
+      "sha256": "30255386be1d70d6f6f1acb569537e6e79d7dfdfb9c595a19e9e9000ee8f8c6a",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/run.go",
+      "seedPath": "internal/platform/run.go",
+      "bytes": 3938,
+      "sha256": "fd4189092734d7ed2c99c897856a407e6164166d52bc1177c98ef9499a19d57e",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/store.go",
+      "seedPath": "internal/platform/store.go",
+      "bytes": 4219,
+      "sha256": "84fba2a9fa9985634c827502dcdf727346b85a4a83d08e553cccb80963b6d648",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    },
+    {
+      "sourcePath": "tools/server-go/template/internal/platform/store_test.go",
+      "seedPath": "internal/platform/store_test.go",
+      "bytes": 1962,
+      "sha256": "01eb5f187778639b3f03f09c5b459cbf8e7373cd2da8e14e6b02ad4eec44b72f",
+      "disposition": "frozen snapshot; parameterize at generation; proto source regenerated from .proto"
+    }
+  ],
+  "selectionRationale": "Only Go six-service shared template sources retained; Cocos client, sample duplicate config, legacy shared-role runner and GREA-specific stack/smoke lifecycle excluded. Generator-produced Go protocol bindings are omitted and regenerated from .proto.",
+  "sourceSnapshotSha256": "283f5fca66e95f1fa65a52fa3c43169f40661ded30a13db375a6e0bb37ab92b3",
+  "licenseSha256": "023464f82fdd9559e762f1057cc2d6bc9686bffebb9e99093c4a2dc673d04c4e",
+  "handoffContractPath": "private upstream provenance record (not distributed)",
+  "handoffContractSha256": "fa3442a22e721014f32d18e04a5582726d0580badf80892d6eb69311db8c3e1c",
+  "privacyNote": "Original provenance records are retained locally; listed source digests refer to those originals. Required license files are distributed separately."
+}

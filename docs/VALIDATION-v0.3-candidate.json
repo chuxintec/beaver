@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "version": "0.3.0",
+  "scope": "Redacted historical private-fixture summary",
+  "verified": [
+    "native resource/configuration/code production",
+    "controlled transaction save and readback",
+    "isolated Go and Unity integration"
+  ],
+  "preservedFailures": [
+    "A Unicode-path Play fixture encountered an Editor search-database failure; this was not reclassified as success."
+  ],
+  "limits": [
+    "No production-service or universal project acceptance claim."
+  ],
+  "rawEvidencePublished": false
+}

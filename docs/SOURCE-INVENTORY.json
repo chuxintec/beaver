@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "scope": "Public provenance summary",
+  "upstreamProducts": [
+    "monkey",
+    "GREA"
+  ],
+  "licenses": [
+    "MIT"
+  ],
+  "rawPrivateSourceInventoryPublished": false,
+  "note": "Only reusable project-tooling code and its required license notices are distributed. Original project files, private paths and internal source inventories are retained locally."
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "version": "0.5.0",
+  "scope": "Public release validation summary; underlying private evidence is not distributed",
+  "verified": {
+    "relatedChecks": 47,
+    "relatedNativeCompanionSourcesCompiled": 10,
+    "nativeFixture": [
+      "UI text overflow and explicit expectation detection",
+      "six-action grouped Prefab transaction",
+      "three references and one event persisted across reload",
+      "exact Sprite subasset identity read back",
+      "live button-center raycast sample",
+      "fallback-aware missing-glyph negative case"
+    ]
+  },
+  "greaAdapter": {
+    "affectedChecks": 12,
+    "operations": [
+      "ui.inspect",
+      "ui.analyze",
+      "ui.repair-plan",
+      "wiring.plan",
+      "diagnostics.summarize"
+    ],
+    "cliAndStdio": "bounded local forwarding verified; partial/blocked and postexecution failure facts preserved",
+    "uiInspectEditorExecutedByAdapter": false,
+    "legacyToolkitRawOutputPreserved": true
+  },
+  "actualFixtureViewport": [
+    640,
+    480
+  ],
+  "designReference": [
+    750,
+    1334
+  ],
+  "pending": [
+    "production-project adoption on a naturally ready authorized task",
+    "physical input and visual parity acceptance"
+  ],
+  "limits": [
+    "Static or caller-supplied snapshots do not authenticate live collection.",
+    "Native center raycast sampling is not a physical click.",
+    "Historical private validation does not mean all engines, platforms or applications passed.",
+    "No speedup multiplier is claimed without a comparable manual baseline."
+  ],
+  "rawEvidencePublished": false
+}

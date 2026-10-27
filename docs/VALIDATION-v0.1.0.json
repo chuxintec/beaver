@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "product": "beaver",
+  "version": "0.1.0",
+  "status": "verified_local_candidate_not_published",
+  "wheel": {
+    "path": ".private/dist/final-03/beaver_game_tools-0.1.0-py3-none-any.whl",
+    "sha256": "09020d42b75497ec39040f08e48fab24378a0baa5b51cebe92529fe67a7ee2f6",
+    "bytes": 59166
+  },
+  "pythonTests": {
+    "status": "passed",
+    "count": 23,
+    "command": "PYTHONPATH=src:tests python3 -m unittest discover -s tests -q",
+    "scope": "adoption/conflict/stale/path/Creator rejection; JSON/PNG; native plans; Player pins; payload alias/copy/atomic failure"
+  },
+  "native": {
+    "editor": "6000.6.2f1",
+    "scope": "self-authored isolated project only",
+    "adoption": "move/add/new-folder/save-reopen/normal rollback/later-edit reject/real postprocessor failure and protected recovery",
+    "ui": "uGUI/TMP window/list/button/text; native prefab edits and component/Sprite references; save/reopen and source audit",
+    "importer": "single Sprite PPU/pivot/GUID/localID readback",
+    "playMode": {
+      "seconds": 3,
+      "errors": 0,
+      "physicalInput": "not_run"
+    },
+    "build": {
+      "status": "Succeeded",
+      "errors": 0,
+      "sourceSha256": "c53acc9c17824525b154246c08890b4efcb98e39d63ca455bf016dc18214f16b",
+      "sourceUnchanged": true,
+      "payloadEntries": 160,
+      "bytes": 72984682
+    },
+    "player": {
+      "status": "verified",
+      "exitCode": 0,
+      "counter": 1,
+      "syntheticUIEvent": true,
+      "runtimeJsonValid": true,
+      "rejectedMissingField": true,
+      "rejectedWrongType": true,
+      "prePostPayloadVerification": "ok",
+      "visual": "viewed basic 960x640 visibility/layout; no original-game parity claim",
+      "physicalInput": "not_run",
+      "saveIsolation": "not_claimed"
+    }
+  },
+  "largePreview": {
+    "status": "planned",
+    "candidateFiles": 164599,
+    "candidateBytes": 3267184074,
+    "seconds": 43.8,
+    "scope": "read-only existing isolated fixture; same candidate baseline for scale only; no paused Editor launched",
+    "candidateManifestSha256": "a5fbb897535a8789b9d0cbe2d035bbdde525d61607710e219bf21481adada655"
+  },
+  "sourceIntake": {
+    "initialSeeds": 56,
+    "monkeyArchiveVerified": true,
+    "greaFrozenEntries": 40,
+    "greaTemplateIndexOnly": 367,
+    "colleagueScriptsReadInFull": 4,
+    "privateSourceOrGamePayloadInWheel": false
+  },
+  "grea": {
+    "version": "2026.10.26.dev3",
+    "archiveSha256": "ab881bd7359203c3fa85fe25586702b3ce040258520d67517a168abc32a4165b",
+    "beaverWheelPinned": true,
+    "monkeyReady": "0.4.0",
+    "beaverReady": "0.1.0",
+    "executed": [
+      "final-03 pinned project.inspect",
+      "final-03 native build/shared artifact verifier",
+      "final-03 Player pre/post verification and exit",
+      "final-03 post-run package identity check"
+    ],
+    "globalInstalled": false,
+    "historicalNativePrefabReadback": {
+      "wheelSha256": "c111b92ca122c26b25a1f71f850d3db143e5c32818b1a4a6069cca8dde62bc69",
+      "location": ".private/grea-verification/native-inspect-transaction",
+      "scope": "earlier wheel; same C# source; historical receipt not a final-03 rerun"
+    }
+  },
+  "limitations": [
+    "Creator native apply/build unsupported; static preview only",
+    "Windows/Linux native promotion/build/launch not_run",
+    "Static asmdef scan remains partial for unresolved optional/platform/define-constrained references; actual native compile/build passed",
+    "Ordinary unity operations retain journals/before-images but have no universal automatic rollback; adoption has protected native rollback",
+    "No arbitrary script refactor, source decoder, WebView/WASM host or foreign protocol validation",
+    "Complex resource closure and full game business/parity/physical input not_run",
+    "Isolated evidence/process does not certify isolated game saves",
+    "Whole colleague archive validation delegated; only selected sources and metadata read by beaver"
+  ],
+  "originalGameWrites": false,
+  "pausedGameEditorStarted": false,
+  "servicesChanged": false,
+  "remoteCreated": false,
+  "pushed": false,
+  "released": false,
+  "artifacts": [
+    {
+      "path": "docs/SOURCE-INVENTORY.json",
+      "sha256": "f0c104e5fa083574c3e37793107c24854040b22b696fd1319aad885bf813af3f",
+      "bytes": 131250
+    },
+    {
+      "path": "docs/SOURCE-FREEZE.json",
+      "sha256": "da41fc0b92be7942bf9a229597b7332b1602e53826b6c681b41175d6d1d0fe2b",
+      "bytes": 2706
+    },
+    {
+      "path": "docs/GREA-HANDOFF-RECEIPT.json",
+      "sha256": "e8a4e91a35d7884284adac5eff0676b17af4142b52e3c974605324e1bffe7ec2",
+      "bytes": 242700
+    },
+    {
+      "path": "docs/COLLEAGUE-INTAKE.json",
+      "sha256": "dec937f385a676f06be3f7ee95ab2d2b08408f3aee27a034011888783d5f63d5",
+      "bytes": 3461
+    },
+    {
+      "path": ".private/validation/adopt-cli-result.json",
+      "sha256": "5f0c04f1c71fee18c0f79553093c39ffaed3244a0b76916c9f7e13c638b5f90f",
+      "bytes": 1450
+    },
+    {
+      "path": ".private/validation/rollback-conflict.json",
+      "sha256": "c890829e7e19dbc4a1ebff373b18e52b2ebdadbc8cb52dabbc874fc364ba0b64",
+      "bytes": 173
+    },
+    {
+      "path": ".private/validation/rollback-cli-result.json",
+      "sha256": "051599893e1eac804e852f21771ac794109e0967f3711cd3a9509a15991ad1a2",
+      "bytes": 787
+    },
+    {
+      "path": ".private/validation/adopt-add-cli-result.json",
+      "sha256": "b7ba506094ad938bc6a973a2a3b498a83c992d21d87ce998e481573d089c638c",
+      "bytes": 1612
+    },
+    {
+      "path": ".private/validation/rollback-add-cli-result.json",
+      "sha256": "a7147d20e23ca0ee22052c895b7919aebb25cc9260d78c28d9e27eb6a993dd72",
+      "bytes": 795
+    },
+    {
+      "path": ".private/validation/adopt-failure-cli-02-result.json",
+      "sha256": "48bac3fb9b5bcb1a1cf359504e6a5c8e9948afc243d90323f63a471ded039d99",
+      "bytes": 1098
+    },
+    {
+      "path": ".private/validation/recovery-cli-result.json",
+      "sha256": "2b2df16fed6c386dfe589326e0d40dcff4bae547df2602c77f7029a1bc74d2fc",
+      "bytes": 809
+    },
+    {
+      "path": ".private/validation/large-preview-timing.json",
+      "sha256": "1f08bc4e46a855d87a24633320a06b3de0860dc892c9509a05dc0ffa43115760",
+      "bytes": 532
+    },
+    {
+      "path": ".private/validation/ui-cli-06-result.json",
+      "sha256": "0fcf3f6c24a5b14fa2db03a319ec17dd4733b067b7231177991781379ac0ba0f",
+      "bytes": 14234
+    },
+    {
+      "path": ".private/validation/prefab-edit-cli-result.json",
+      "sha256": "f7c700ff3d464cb5113affee37ff97c659578d47a9786a7e863abcbc33af5bd1",
+      "bytes": 12876
+    },
+    {
+      "path": ".private/validation/sprite-cli-result.json",
+      "sha256": "fedb041af5274152f97943be1f8f3004db472c8eb1859ee8ed79de4c748a7baa",
+      "bytes": 3261
+    },
+    {
+      "path": ".private/validation/move-cli-result.json",
+      "sha256": "aa38a8004456bebfa65adbf01bfe748cb9c5c11ab48022a5dea1ed1a79dc05be",
+      "bytes": 5031
+    },
+    {
+      "path": ".private/validation/play-cli-result.json",
+      "sha256": "1a60f390b49d987b8172f5e34d1d06be31885be3f490dbfc965d28d6c89ee479",
+      "bytes": 2405
+    },
+    {
+      "path": ".private/validation/code-inspect.json",
+      "sha256": "0fe3bf526fda5795ce6e22b05ee4c5c42276a33944b685d3046b2ef3ee08b6d8",
+      "bytes": 3983
+    },
+    {
+      "path": ".private/validation/image-chain/compression-result.json",
+      "sha256": "55f1636f874e964448e4077c3678b236b82637220f061807ec2049ab6ca3e453",
+      "bytes": 1025
+    },
+    {
+      "path": ".private/colleague-validation/installed-result.json",
+      "sha256": "b35eb338eee839c7be553067b3e6735b06c4b8ea048c61a0201d2dd0776fb1b3",
+      "bytes": 366
+    },
+    {
+      "path": ".private/colleague-validation/installed-apply-result.json",
+      "sha256": "68f0874e10a79f18f747bfe8a3fd6aad43b95b6eeb853b25d9009c67cd77dbc7",
+      "bytes": 1439
+    },
+    {
+      "path": ".private/colleague-validation/installed-verify-result.json",
+      "sha256": "5196fb9e2748e4c83d3d0c360446b4ec7e7a05385ef8e2a1d355836490e600d8",
+      "bytes": 956
+    },
+    {
+      "path": ".private/grea-intake-verification/pin/beaver-lock.json",
+      "sha256": "d0fa0ebdb6640195232cb6cb191112cd6d4e3b4f6d194c0b88ef508a5b26ff2d",
+      "bytes": 5042
+    },
+    {
+      "path": ".private/grea-intake-verification/build-envelope.json",
+      "sha256": "1cda65913d608113e46a992740201b9feb5a5cdf4c58aedf6bae6165e23b3547",
+      "bytes": 10006
+    },
+    {
+      "path": ".private/grea-intake-verification/build-transaction/journal.json",
+      "sha256": "9b4ab319a6278153b6500a351bc3b3b8f406ae158322f84549dacdd16fd8fecd",
+      "bytes": 37950
+    },
+    {
+      "path": ".private/grea-intake-verification/build-transaction/artifact-manifest.json",
+      "sha256": "a050dc337b60d9b15973a0ae945eeb66341fbad951ed80e4897d7bbf32746a4c",
+      "bytes": 35187
+    },
+    {
+      "path": ".private/grea-intake-verification/player-envelope.json",
+      "sha256": "ab61c2e9b3932598f3959d6254ce5370c53f55a142d6b4d59558f7fd404f26cb",
+      "bytes": 10981
+    },
+    {
+      "path": ".private/grea-intake-verification/player-run/process.json",
+      "sha256": "3a10678bda578ff792b2a77e4c33f98eef168ab2cca386a02f40207ac0bae8ab",
+      "bytes": 1185
+    },
+    {
+      "path": ".private/grea-intake-verification/player-run/player-result.json",
+      "sha256": "6522c69099144203694a81e41860115ea41fd469f436d1478c0be51493754bee",
+      "bytes": 2888
+    },
+    {
+      "path": ".private/grea-intake-verification/player-smoke.json",
+      "sha256": "7afc6feab7b2068fe8bb51f9f8d7992e69fe2d7619ae1b96fbcb234f311ce597",
+      "bytes": 387
+    },
+    {
+      "path": ".private/grea-intake-verification/player-smoke.png",
+      "sha256": "9eca0a6601817f4d07af574e7c746860412be8ec0af5faff382cbf25b98ae100",
+      "bytes": 29680
+    },
+    {
+      "path": ".private/grea-intake-verification/post-check/result.json",
+      "sha256": "52034fd4da373d19b977a72d63b8d04e421cd2921ef66d43c0d33d6b7ad73514",
+      "bytes": 390
+    },
+    {
+      "path": ".private/grea-intake-verification/project-inspect/result.json",
+      "sha256": "f6753780f60e708b00665d681b1bd7f7dba2ab779fdc8921699ce645d31a2387",
+      "bytes": 2676
+    },
+    {
+      "path": ".private/dist/final-03/beaver_game_tools-0.1.0-py3-none-any.whl",
+      "sha256": "09020d42b75497ec39040f08e48fab24378a0baa5b51cebe92529fe67a7ee2f6",
+      "bytes": 59166
+    }
+  ]
+}

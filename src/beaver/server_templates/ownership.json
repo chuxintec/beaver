@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "owners": {
+    "login": ["accounts", "sessions"],
+    "server": ["player_state", "asset_ledger", "command_receipts", "outbox"],
+    "chat": ["messages", "membership", "moderation"],
+    "world": ["realms", "routes", "cross_tasks"],
+    "billing": ["orders", "provider_transactions", "fulfillment_state"]
+  },
+  "access": "cross-owner RPC only; no cross-service SQL"
+}

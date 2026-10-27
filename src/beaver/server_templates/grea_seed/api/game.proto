@@ -1,0 +1,26 @@
+syntax = "proto3";
+package grea.example.v1;
+option go_package = "example.com/grea/server/api;api";
+message Request {
+ string session_id = 1;
+ string operation_id = 2;
+ int64 expected_revision = 3;
+ string action = 4;
+ string text = 5;
+ string credential = 6;
+ string config_version = 7;
+}
+message Reply {
+ string code = 1;
+ int64 revision = 2;
+ int64 balance = 3;
+ string session_id = 4;
+ string address = 5;
+ string message = 6;
+ string config_version = 7;
+}
+service Login { rpc Call(Request) returns (Reply); }
+service Game { rpc Call(Request) returns (Reply); }
+service World { rpc Call(Request) returns (Reply); }
+service Chat { rpc Call(Request) returns (Reply); }
+service Billing { rpc Call(Request) returns (Reply); }

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "version": "0.2.0",
+  "scope": "Redacted historical private-fixture summary",
+  "verified": [
+    "controlled batch plans and recovery preconditions",
+    "native Prefab save and reload",
+    "selected resource and reference operations"
+  ],
+  "limits": [
+    "Private fixture results do not establish arbitrary project, gameplay or visual acceptance."
+  ],
+  "rawEvidencePublished": false
+}

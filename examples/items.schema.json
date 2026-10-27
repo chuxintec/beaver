@@ -1,0 +1,1 @@
+{"schemaVersion":1,"name":"BeaverItem","key":"id","fields":[{"name":"id","type":"string"},{"name":"price","type":"int","min":1,"max":100000},{"name":"enabled","type":"bool"}]}

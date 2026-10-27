@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Public integration summary",
+  "provider": "beaver",
+  "consumer": "GREA",
+  "contract": "beaver-result/1; toolkit subcommands retain their original reports and exit codes",
+  "status": "limited local adapter verification",
+  "defaultOrGlobalInstallUpdated": false,
+  "privateReceiptsPublished": false
+}

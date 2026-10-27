@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "scope": "Public implementation provenance summary",
+  "method": "Private reference materials informed bounded project-tooling requirements; private archives and project-specific source are excluded.",
+  "implemented": [
+    "independent artifact materialization",
+    "alias and manifest checks",
+    "bounded native provider operations"
+  ],
+  "licensing": "Required upstream MIT notices are retained.",
+  "privateArchivesPublished": false
+}

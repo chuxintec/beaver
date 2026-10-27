@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beaver-game-tools"
+version = "0.5.0"
+description = "Controlled native game project adoption and development tools"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+readme = "README.md"
+dependencies = []
+
+[project.optional-dependencies]
+images = ["Pillow>=10,<13"]
+# Runtime libraries of the GREA toolkit (`beaver tool <id>`); GREA modules get them from the GREA runtime.
+toolkit = ["Pillow>=10,<13", "jsonschema>=4.20,<5"]
+
+[project.scripts]
+beaver = "beaver.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+beaver = ["targets/*.cs", "targets/*.template", "licenses/*.txt", "server_templates/**/*", "server_templates/grea_seed/.dockerignore", "server_templates/grea_seed/.gitignore"]

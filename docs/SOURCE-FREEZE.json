@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "scope": "Public source provenance summary",
+  "upstreamProducts": [
+    "monkey",
+    "GREA"
+  ],
+  "licenseNotices": [
+    "MONKEY-THIRD-PARTY-NOTICES.md",
+    "../src/beaver/licenses/MONKEY-MIT.txt",
+    "../src/beaver/licenses/GREA-MIT.txt"
+  ],
+  "privateSnapshotsPublished": false,
+  "excluded": [
+    "source-package decoders",
+    "original game projects",
+    "private evidence",
+    "credentials"
+  ]
+}

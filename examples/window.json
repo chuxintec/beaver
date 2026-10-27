@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "operation": "ui.create",
+  "prefabPath": "Assets/Game/Content/UI/Sample/BeaverWindow.prefab",
+  "scenePath": "Assets/Game/Scenes/BeaverSample.unity",
+  "fontAssetPath": "Assets/Game/Content/Fonts/BeaverFont.asset",
+  "width": 960,
+  "height": 640,
+  "nodes": [
+    {
+      "id": "window",
+      "name": "Window",
+      "parent": "",
+      "kind": "panel",
+      "width": 860,
+      "height": 540,
+      "color": [
+        0.06,
+        0.08,
+        0.14,
+        1
+      ]
+    },
+    {
+      "id": "title",
+      "name": "Title",
+      "parent": "window",
+      "kind": "text",
+      "text": "beaver 0.1.0",
+      "x": 0,
+      "y": 210,
+      "width": 720,
+      "height": 54,
+      "fontSize": 40
+    },
+    {
+      "id": "list",
+      "name": "Items",
+      "parent": "window",
+      "kind": "list",
+      "width": 700,
+      "height": 220,
+      "y": 25,
+      "color": [
+        0.1,
+        0.14,
+        0.22,
+        1
+      ]
+    },
+    {
+      "id": "row1",
+      "name": "Row1",
+      "parent": "list",
+      "kind": "text",
+      "text": "Native Prefab + strict JSON",
+      "width": 660,
+      "height": 60,
+      "fontSize": 28
+    },
+    {
+      "id": "row2",
+      "name": "Counter",
+      "parent": "list",
+      "kind": "text",
+      "text": "Count: 0",
+      "width": 660,
+      "height": 60,
+      "fontSize": 28
+    },
+    {
+      "id": "button",
+      "name": "Action",
+      "parent": "window",
+      "kind": "button",
+      "x": 0,
+      "y": -180,
+      "width": 300,
+      "height": 70
+    },
+    {
+      "id": "label",
+      "name": "Label",
+      "parent": "button",
+      "kind": "text",
+      "text": "Click to count",
+      "width": 280,
+      "height": 60,
+      "fontSize": 28
+    }
+  ],
+  "sourceFontPath": "Assets/Game/Content/Fonts/BeaverSample.ttf"
+}

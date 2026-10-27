@@ -1,0 +1,672 @@
+// Generated from the same Beaver configuration schema as the C# runtime.
+// Consumers keep the source JSON and schema as the only maintained data.
+package configv3
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"io"
+	"math/big"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strconv"
+	"strings"
+	"unicode/utf8"
+)
+
+const maxConfigBytes = 64 * 1024 * 1024
+const maxConfigNodes = 2_000_000
+const maxConfigDepth = 128
+
+type Snapshot struct {
+	InputSHA256  string `json:"inputSha256"`
+	SchemaSHA256 string `json:"schemaSha256"`
+	SchemaID     string `json:"schemaId"`
+}
+
+type ValidationError struct{ Code, Path, Message string }
+
+func (e *ValidationError) Error() string { return e.Code + " at " + e.Path + ": " + e.Message }
+func bad(code, path, message string) error {
+	return &ValidationError{Code: code, Path: path, Message: message}
+}
+func jsonFailure(err error) error {
+	if err == nil {
+		return nil
+	}
+	if _, ok := err.(*ValidationError); ok {
+		return err
+	}
+	return bad("CONFIG_JSON", "/", err.Error())
+}
+
+type ValidationOptions struct {
+	ProjectRoot    string
+	ExternalTables map[string][]any
+	AssetGUIDs     map[string][]string
+}
+
+type Optional[T any] struct {
+	Present bool
+	Value   T
+}
+
+func (o *Optional[T]) UnmarshalJSON(data []byte) error {
+	o.Present = true
+	return json.Unmarshal(data, &o.Value)
+}
+
+type Nullable[T any] struct {
+	Null  bool
+	Value T
+}
+
+func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
+		n.Null = true
+		var zero T
+		n.Value = zero
+		return nil
+	}
+	n.Null = false
+	return json.Unmarshal(data, &n.Value)
+}
+
+type Decimal struct{ Text string }
+
+func (d *Decimal) UnmarshalJSON(data []byte) error {
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err != nil {
+		return err
+	}
+	if _, ok := new(big.Rat).SetString(n.String()); !ok {
+		return fmt.Errorf("invalid decimal")
+	}
+	d.Text = n.String()
+	return nil
+}
+func (d Decimal) Rat() (*big.Rat, bool) { return new(big.Rat).SetString(d.Text) }
+
+type BigInteger struct{ Value big.Int }
+
+func (n *BigInteger) UnmarshalJSON(data []byte) error {
+	s := string(bytes.TrimSpace(data))
+	if strings.ContainsAny(s, ".eE") {
+		return fmt.Errorf("integer required")
+	}
+	if _, ok := n.Value.SetString(s, 10); !ok {
+		return fmt.Errorf("invalid integer")
+	}
+	return nil
+}
+
+func ReadConfiguration[T any](inputJSON, schemaJSON []byte) (T, Snapshot, error) {
+	return ReadConfigurationWithOptions[T](inputJSON, schemaJSON, ValidationOptions{})
+}
+func ReadConfigurationWithOptions[T any](inputJSON, schemaJSON []byte, options ValidationOptions) (T, Snapshot, error) {
+	var result T
+	ih, sh := sha256.Sum256(inputJSON), sha256.Sum256(schemaJSON)
+	snap := Snapshot{InputSHA256: hex.EncodeToString(ih[:]), SchemaSHA256: hex.EncodeToString(sh[:])}
+	input, err := parseStrict(inputJSON)
+	if err != nil {
+		return result, snap, err
+	}
+	schemaValue, err := parseStrict(schemaJSON)
+	if err != nil {
+		return result, snap, err
+	}
+	schema, ok := schemaValue.(map[string]any)
+	if !ok {
+		return result, snap, bad("SCHEMA", "/", "schema root must be an object")
+	}
+	snap.SchemaID, _ = schema["id"].(string)
+	if err = validateNode(input, schema["root"], "", schema); err != nil {
+		return result, snap, err
+	}
+	if err = validateRelations(input, schema, options); err != nil {
+		return result, snap, err
+	}
+	applyDefaults(input, schema["root"])
+	canonical, err := json.Marshal(input)
+	if err != nil {
+		return result, snap, err
+	}
+	dec := json.NewDecoder(bytes.NewReader(canonical))
+	dec.UseNumber()
+	dec.DisallowUnknownFields()
+	if err = dec.Decode(&result); err != nil {
+		return result, snap, err
+	}
+	if err = ensureEOF(dec); err != nil {
+		return result, snap, err
+	}
+	return result, snap, nil
+}
+
+func parseStrict(raw []byte) (any, error) {
+	if len(raw) > maxConfigBytes {
+		return nil, bad("CONFIG_BUDGET", "/", "JSON exceeds 64 MiB")
+	}
+	if !utf8.Valid(raw) {
+		return nil, bad("CONFIG_UTF8", "/", "JSON input must be strict UTF-8")
+	}
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.UseNumber()
+	count := 0
+	v, err := parseValue(dec, 0, &count)
+	if err != nil {
+		return nil, jsonFailure(err)
+	}
+	if err = ensureEOF(dec); err != nil {
+		return nil, jsonFailure(err)
+	}
+	return v, nil
+}
+func ensureEOF(dec *json.Decoder) error {
+	var extra any
+	err := dec.Decode(&extra)
+	if err == io.EOF {
+		return nil
+	}
+	if err == nil {
+		return fmt.Errorf("trailing JSON content")
+	}
+	return err
+}
+
+func parseValue(dec *json.Decoder, depth int, count *int) (any, error) {
+	*count++
+	if *count > maxConfigNodes || depth > maxConfigDepth {
+		return nil, bad("CONFIG_BUDGET", "/", "JSON exceeds node/depth bounds")
+	}
+	tok, err := dec.Token()
+	if err != nil {
+		return nil, err
+	}
+	if d, ok := tok.(json.Delim); ok {
+		switch d {
+		case '{':
+			m := map[string]any{}
+			for dec.More() {
+				keyToken, e := dec.Token()
+				if e != nil {
+					return nil, e
+				}
+				key, ok := keyToken.(string)
+				if !ok {
+					return nil, fmt.Errorf("object key is not string")
+				}
+				if _, exists := m[key]; exists {
+					return nil, bad("DUPLICATE_KEY", "/"+escapePointer(key), "duplicate JSON object key")
+				}
+				value, e := parseValue(dec, depth+1, count)
+				if e != nil {
+					return nil, e
+				}
+				m[key] = value
+			}
+			_, err = dec.Token()
+			return m, err
+		case '[':
+			a := []any{}
+			for dec.More() {
+				v, e := parseValue(dec, depth+1, count)
+				if e != nil {
+					return nil, e
+				}
+				a = append(a, v)
+			}
+			_, err = dec.Token()
+			return a, err
+		default:
+			return nil, fmt.Errorf("unexpected delimiter")
+		}
+	}
+	return tok, nil
+}
+func escapePointer(s string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(s, "~", "~0"), "/", "~1")
+}
+func asMap(v any) map[string]any { m, _ := v.(map[string]any); return m }
+func asArray(v any) []any        { a, _ := v.([]any); return a }
+func schemaNode(schema, node any) map[string]any {
+	n := asMap(node)
+	for {
+		ref, _ := n["$ref"].(string)
+		if ref == "" {
+			return n
+		}
+		parts := strings.Split(ref, "/")
+		if len(parts) != 3 || parts[1] != "definitions" {
+			return map[string]any{}
+		}
+		n = asMap(asMap(asMap(schema)["definitions"])[strings.ReplaceAll(strings.ReplaceAll(parts[2], "~1", "/"), "~0", "~")])
+	}
+}
+func numberRat(v any) (*big.Rat, bool) {
+	switch n := v.(type) {
+	case json.Number:
+		s := n.String()
+		if len(s) > 1024 {
+			return nil, false
+		}
+		if at := strings.IndexAny(s, "eE"); at >= 0 {
+			exp, err := strconv.Atoi(s[at+1:])
+			if err != nil || exp > 1024 || exp < -1024 {
+				return nil, false
+			}
+		}
+		return new(big.Rat).SetString(s)
+	case string:
+		if len(n) > 1024 {
+			return nil, false
+		}
+		return new(big.Rat).SetString(n)
+	case int:
+		return new(big.Rat).SetInt64(int64(n)), true
+	case int64:
+		return new(big.Rat).SetInt64(n), true
+	default:
+		return nil, false
+	}
+}
+func jsonType(v any) string {
+	switch v.(type) {
+	case map[string]any:
+		return "object"
+	case []any:
+		return "array"
+	case string:
+		return "string"
+	case bool:
+		return "boolean"
+	case json.Number:
+		return "number"
+	case nil:
+		return "null"
+	default:
+		return "unknown"
+	}
+}
+func decimalScale(n json.Number) int {
+	s := n.String()
+	exp := 0
+	if at := strings.IndexAny(s, "eE"); at >= 0 {
+		e, _ := strconv.Atoi(s[at+1:])
+		exp = e
+		s = s[:at]
+	}
+	scale := 0
+	if dot := strings.IndexByte(s, '.'); dot >= 0 {
+		scale = len(s) - dot - 1
+	}
+	if scale-exp < 0 {
+		return 0
+	}
+	return scale - exp
+}
+func validateNode(value, node any, path string, schema any) error {
+	n := schemaNode(schema, node)
+	if value == nil {
+		nullable, _ := n["nullable"].(bool)
+		if nullable {
+			return nil
+		}
+		return bad("NULL_NOT_ALLOWED", path, "explicit null is not allowed")
+	}
+	kind, _ := n["type"].(string)
+	actual := jsonType(value)
+	valid := actual == kind || kind == "decimal" && actual == "number" || kind == "integer" && actual == "number" || kind == "dictionary" && actual == "object" || kind == "enum" && (actual == "string" || actual == "number")
+	if !valid {
+		return bad("TYPE_MISMATCH", path, "expected "+kind+", got "+actual)
+	}
+	if kind == "enum" {
+		base, _ := n["base"].(string)
+		if base == "integer" {
+			if _, ok := value.(json.Number); !ok {
+				return bad("ENUM_VALUE", path, "integer enum required")
+			}
+		}
+		values := asArray(n["values"])
+		found := false
+		for _, x := range values {
+			if reflect.DeepEqual(x, value) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return bad("ENUM_VALUE", path, "value is outside declared enum")
+		}
+		return nil
+	}
+	if kind == "integer" || kind == "decimal" {
+		num, ok := numberRat(value)
+		if !ok {
+			return bad("NUMBER_INVALID", path, "invalid exact numeric value")
+		}
+		for _, key := range []string{"minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"} {
+			if bound, exists := n[key]; exists {
+				b, bok := numberRat(bound)
+				if !bok {
+					return bad("SCHEMA_NUMBER", path, "invalid exact numeric schema bound")
+				}
+				cmp := num.Cmp(b)
+				if key == "minimum" && cmp < 0 || key == "maximum" && cmp > 0 || key == "exclusiveMinimum" && cmp <= 0 || key == "exclusiveMaximum" && cmp >= 0 {
+					return bad("NUMBER_RANGE", path, "numeric bound "+key+" failed")
+				}
+			}
+		}
+		number := value.(json.Number).String()
+		if kind == "integer" {
+			if strings.ContainsAny(number, ".eE") {
+				return bad("TYPE_MISMATCH", path, "integer token required")
+			}
+			bits, _ := n["bits"].(json.Number)
+			i, ok := new(big.Int).SetString(number, 10)
+			if !ok {
+				return bad("NUMBER_INVALID", path, "invalid integer")
+			}
+			if bits.String() == "32" && (!i.IsInt64() || i.Int64() < -2147483648 || i.Int64() > 2147483647) {
+				return bad("INTEGER_WIDTH", path, "integer overflows int32")
+			}
+			if bits.String() == "64" && !i.IsInt64() {
+				return bad("INTEGER_WIDTH", path, "integer overflows int64")
+			}
+		} else {
+			if decimalScale(json.Number(number)) > 28 {
+				return bad("DECIMAL_PRECISION", path, "decimal scale exceeds shared C#/Go maximum 28")
+			}
+			limit, _ := new(big.Rat).SetString("79228162514264337593543950335")
+			abs := new(big.Rat).Abs(num)
+			if abs.Cmp(limit) > 0 {
+				return bad("DECIMAL_PRECISION", path, "decimal magnitude exceeds shared C#/Go range")
+			}
+			if max, ok := n["maxScale"].(json.Number); ok {
+				if int64(decimalScale(json.Number(number))) > toInt(max) {
+					return bad("NUMBER_SCALE", path, "decimal scale exceeds maxScale")
+				}
+			}
+		}
+		return nil
+	}
+	if kind == "string" || kind == "boolean" {
+		return nil
+	}
+	if kind == "object" {
+		obj := asMap(value)
+		props := asMap(n["properties"])
+		required := map[string]bool{}
+		for _, raw := range asArray(n["required"]) {
+			if s, ok := raw.(string); ok {
+				required[s] = true
+			}
+		}
+		for key := range required {
+			if _, ok := obj[key]; !ok {
+				return bad("REQUIRED_MISSING", path+"/"+escapePointer(key), "required property missing")
+			}
+		}
+		for key, v := range obj {
+			child, ok := props[key]
+			if !ok {
+				if ap, yes := n["additionalProperties"].(map[string]any); yes {
+					child = ap
+				} else {
+					allow, _ := n["additionalProperties"].(bool)
+					if allow {
+						continue
+					}
+					return bad("UNKNOWN_FIELD", path+"/"+escapePointer(key), "unknown property")
+				}
+			}
+			if err := validateNode(v, child, path+"/"+escapePointer(key), schema); err != nil {
+				return err
+			}
+		}
+		for key, child := range props {
+			if _, exists := obj[key]; exists || required[key] {
+				continue
+			}
+			cn := schemaNode(schema, child)
+			def := asMap(cn["default"])
+			policy, _ := def["policy"].(string)
+			if policy == "value" {
+				if err := validateNode(def["value"], child, path+"/"+escapePointer(key), schema); err != nil {
+					return err
+				}
+			} else if policy == "null" {
+				if err := validateNode(nil, child, path+"/"+escapePointer(key), schema); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+	if kind == "dictionary" {
+		for key, v := range asMap(value) {
+			if err := validateNode(v, n["values"], path+"/"+escapePointer(key), schema); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	if kind == "array" {
+		arr := asArray(value)
+		if min, ok := n["minItems"].(json.Number); ok && int64(len(arr)) < toInt(min) {
+			return bad("ARRAY_MIN_ITEMS", path, "array has too few items")
+		}
+		if max, ok := n["maxItems"].(json.Number); ok && int64(len(arr)) > toInt(max) {
+			return bad("ARRAY_MAX_ITEMS", path, "array has too many items")
+		}
+		for i, v := range arr {
+			if err := validateNode(v, n["items"], fmt.Sprintf("%s/%d", path, i), schema); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	return bad("SCHEMA_TYPE", path, "unsupported schema node")
+}
+func toInt(n json.Number) int64 { v, _ := n.Int64(); return v }
+func applyDefaults(value, node any) {
+	n := asMap(node)
+	kind, _ := n["type"].(string)
+	if kind == "object" {
+		obj := asMap(value)
+		for key, child := range asMap(n["properties"]) {
+			if _, ok := obj[key]; !ok {
+				cn := asMap(child)
+				d := asMap(cn["default"])
+				switch d["policy"] {
+				case "value":
+					obj[key] = d["value"]
+				case "null":
+					obj[key] = nil
+				}
+			}
+			if v, ok := obj[key]; ok {
+				applyDefaults(v, child)
+			}
+		}
+	} else if kind == "array" {
+		for _, item := range asArray(value) {
+			applyDefaults(item, n["items"])
+		}
+	}
+}
+
+type Located struct {
+	Value any
+	Path  string
+}
+
+func walkPath(root any, path string) []Located {
+	cur := []Located{{Value: root, Path: ""}}
+	for _, part0 := range strings.Split(path, ".") {
+		many := strings.HasSuffix(part0, "[]")
+		part := strings.TrimSuffix(part0, "[]")
+		next := []Located{}
+		for _, loc := range cur {
+			if part == "*" {
+				for k, child := range asMap(loc.Value) {
+					p := loc.Path + "/" + escapePointer(k)
+					if many {
+						for i, v := range asArray(child) {
+							next = append(next, Located{v, fmt.Sprintf("%s/%d", p, i)})
+						}
+					} else {
+						next = append(next, Located{child, p})
+					}
+				}
+				continue
+			}
+			child, ok := asMap(loc.Value)[part]
+			if !ok {
+				continue
+			}
+			p := loc.Path + "/" + escapePointer(part)
+			if many {
+				for i, v := range asArray(child) {
+					next = append(next, Located{v, fmt.Sprintf("%s/%d", p, i)})
+				}
+			} else {
+				next = append(next, Located{child, p})
+			}
+		}
+		cur = next
+	}
+	return cur
+}
+func validateRelations(root any, schema any, options ValidationOptions) error {
+	s := asMap(schema)
+	indexes := map[string]map[string]bool{}
+	for _, raw := range asArray(s["tables"]) {
+		t := asMap(raw)
+		name, path, id := stringValue(t["name"]), stringValue(t["path"]), stringValue(t["id"])
+		set := map[string]bool{}
+		for _, rows := range walkPath(root, path) {
+			for i, row := range asArray(rows.Value) {
+				key, ok := asMap(row)[id]
+				if !ok {
+					continue
+				}
+				k := valueKey(key)
+				if set[k] {
+					return bad("DUPLICATE_ID", fmt.Sprintf("%s/%d/%s", rows.Path, i, escapePointer(id)), "duplicate table identity in "+name)
+				}
+				set[k] = true
+			}
+		}
+		if extra, ok := options.ExternalTables[name]; ok {
+			for _, key := range extra {
+				set[valueKey(key)] = true
+			}
+		}
+		indexes[name] = set
+	}
+	for name, rows := range options.ExternalTables {
+		if indexes[name] == nil {
+			indexes[name] = map[string]bool{}
+		}
+		for _, key := range rows {
+			indexes[name][valueKey(key)] = true
+		}
+	}
+	for _, raw := range asArray(s["references"]) {
+		r := asMap(raw)
+		table, path := stringValue(r["table"]), stringValue(r["path"])
+		for _, loc := range walkPath(root, path) {
+			value := loc.Value
+			skip := false
+			for _, x := range asArray(r["skip"]) {
+				if reflect.DeepEqual(x, value) {
+					skip = true
+				}
+			}
+			if skip {
+				continue
+			}
+			if !indexes[table][valueKey(value)] {
+				return bad("FOREIGN_KEY_MISSING", loc.Path, "reference does not resolve in "+table)
+			}
+		}
+	}
+	return validateResources(root, s, options)
+}
+func valueKey(v any) string {
+	switch x := v.(type) {
+	case json.Number:
+		return "number:" + x.String()
+	case string:
+		return "string:" + x
+	case bool:
+		return "boolean:" + strconv.FormatBool(x)
+	case int:
+		return "number:" + strconv.Itoa(x)
+	case int32:
+		return "number:" + strconv.FormatInt(int64(x), 10)
+	case int64:
+		return "number:" + strconv.FormatInt(x, 10)
+	case BigInteger:
+		return "number:" + x.Value.String()
+	default:
+		b, _ := json.Marshal(v)
+		return jsonType(v) + ":" + string(b)
+	}
+}
+func validateResources(root any, schema map[string]any, options ValidationOptions) error {
+	for _, raw := range asArray(schema["resources"]) {
+		r := asMap(raw)
+		path, kind := stringValue(r["path"]), stringValue(r["kind"])
+		for _, loc := range walkPath(root, path) {
+			if loc.Value == nil && r["nullable"] == true {
+				continue
+			}
+			s, ok := loc.Value.(string)
+			if !ok {
+				return bad("RESOURCE_TYPE", loc.Path, "resource reference must be a string")
+			}
+			if kind == "assetPath" {
+				clean := filepath.Clean(s)
+				if filepath.IsAbs(s) || clean == ".." || strings.HasPrefix(clean, ".."+string(os.PathSeparator)) || !(clean == "Assets" || strings.HasPrefix(clean, "Assets"+string(os.PathSeparator))) {
+					return bad("RESOURCE_PATH_UNSAFE", loc.Path, "expected safe project-relative Assets path")
+				}
+				if options.ProjectRoot != "" {
+					root, err := filepath.EvalSymlinks(options.ProjectRoot)
+					if err != nil {
+						return bad("RESOURCE_PROJECT", loc.Path, "project root cannot be resolved")
+					}
+					full, err := filepath.EvalSymlinks(filepath.Join(root, clean))
+					if err != nil {
+						return bad("RESOURCE_PATH_MISSING", loc.Path, "referenced project asset is missing")
+					}
+					rel, err := filepath.Rel(root, full)
+					if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+						return bad("RESOURCE_PATH_UNSAFE", loc.Path, "resource escapes project root")
+					}
+				}
+			} else if kind == "assetGuid" {
+				if len(s) != 32 {
+					return bad("RESOURCE_GUID", loc.Path, "expected 32-character GUID")
+				}
+				for _, c := range s {
+					if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F') {
+						return bad("RESOURCE_GUID", loc.Path, "invalid GUID")
+					}
+				}
+				if options.AssetGUIDs != nil && len(options.AssetGUIDs[strings.ToLower(s)]) != 1 {
+					return bad("RESOURCE_GUID", loc.Path, "GUID must resolve to exactly one project asset")
+				}
+			} else {
+				return bad("SCHEMA_RESOURCE", loc.Path, "unsupported resource kind")
+			}
+		}
+	}
+	return nil
+}
+func stringValue(v any) string { s, _ := v.(string); return s }

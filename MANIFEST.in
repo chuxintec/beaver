@@ -1,0 +1,11 @@
+include LICENSE README.md pyproject.toml
+recursive-include docs *.md *.json
+recursive-include tests *.py
+recursive-include src/beaver/targets *.cs *.template
+recursive-include src/beaver/licenses *.txt
+recursive-include src/beaver/server_templates *
+prune .private
+prune .venv
+prune build
+prune dist
+global-exclude __pycache__ *.py[cod] .DS_Store
